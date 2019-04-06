@@ -1,5 +1,7 @@
 <?php
 
+$DATABASE_URL = parse_url('postgres://pddmwgvhwaoitm:b8c5d0146dcfa918b9a925df04cff6d7b1d29e2822752609c18bcc47df52ad16@ec2-184-72-238-22.compute-1.amazonaws.com:5432/dbuegh6aasvq7a');
+
 return [
 
     /*
@@ -13,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', 'pgsql'),
 
     /*
     |--------------------------------------------------------------------------
