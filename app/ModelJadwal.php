@@ -33,10 +33,10 @@ class ModelJadwal extends Model
             ->where('tbl_jadwal.id_paket', $id_paket);
         if($id_jadwal) {
             $data = $data->whereNotIn('tbl_jadwal.id_jadwal', [$id_jadwal])
-                ->groupBy(DB::raw('tbl_jadwal.id_jadwal'))
+                ->groupBy('tbl_jadwal.id_jadwal','peserta.jumlah')
                 ->get();
         } else {
-            $data = $data->groupBy(DB::raw('tbl_jadwal.id_jadwal'))
+            $data = $data->groupBy('tbl_jadwal.id_jadwal','peserta.jumlah')
                 ->get();
         }
 
