@@ -9,6 +9,11 @@ use App\ModelPaket;
 
 class JadwalController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         $num = 1;

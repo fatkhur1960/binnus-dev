@@ -8,6 +8,11 @@ use App\ModelPaket;
 
 class PaketController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     public function index()
     {
         $num = 1;

@@ -178,21 +178,27 @@
         </div> 
         <hr/>
         <div class="form-group row">
-            <div class="col-md-9 row">
-                <label for="file_foto" class="control-label col-md-4">Foto</label> 
-                <div class="col-md-8">
+            <div class="col-md-12 row">
+                <label for="file_foto" class="control-label col-md-3">Foto</label> 
+                <div class="col-md-5">
                     <input value="{{ $peserta->file_foto }}" id="file_foto" accept="image/*" name="file_foto" class="form-control" required="required" type="file">
                     <div>*) Foto ukuran 114x150 pixel</div>
                     <div>*) Maksimal 500kb</div>
                 </div>
+                <div class="col-md-4">
+                    <img width="114" height="150" src="{{ url($peserta->file_foto) }}" id="foto"/>
+                </div>
             </div>
         </div> 
         <div class="form-group row">
-            <div class="col-md-9 row">
-                <label for="file_kk" class="control-label col-md-4">Scan KK</label> 
-                <div class="col-md-8">
+            <div class="col-md-12 row">
+                <label for="file_kk" class="control-label col-md-3">Scan KK</label> 
+                <div class="col-md-5">
                     <input value="{{ $peserta->file_kk }}" id="file_kk" accept="image/*" name="file_kk" class="form-control" required="required" type="file">
                     <div>*) Maksimal 800kb</div>
+                </div>
+                <div class="col-md-4">
+                    <img width="114" height="150" src="{{ url($peserta->file_kk) }}" id="kk"/>
                 </div>
             </div>
         </div> 
@@ -206,4 +212,63 @@
         </div>
     </form>
 </div>
+@endsection
+@section('script')
+<script type="text/javascript">
+$(document).ready(function() {
+    $('input[name="file_foto"]').change(function() {
+        if(validate(this,512000)) {
+            readURL(this,'img#foto');
+        }
+    });
+    $('input[name="file_kk"]').change(function() {
+        if(validate(this,768000)) {
+            readURL(this,'img#kk');
+        }
+    });
+});
+function readURL(input, selector) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            if(selector == 'img#foto') {
+                var image = new Image();
+                image.src = e.target.result;
+                image.onload = function () {
+                    var height = this.height;
+                    var width = this.width;
+                    if (height > 150 || width > 114) {
+                        alert("Panjang dan lebar foto terlalu besar! Maks: 150x114");
+                    } else {
+                        $(selector).attr('src', e.target.result);
+                    }
+                };
+            } else {
+                $(selector).attr('src', e.target.result);
+            }
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+function validate(selector, size) {
+    var file_size = selector.files[0].size;
+	if(file_size>size) {
+		alert('Ukuran file terlalu besar! Maks: ' + formatBytes(size));
+		return false;
+	} else {
+        return true;
+    }
+}
+function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+</script>
 @endsection

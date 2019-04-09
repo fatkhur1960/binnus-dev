@@ -11,15 +11,15 @@
                             <h4 class="list-group-item-heading">Step 1</h4>
                             <p style="margin: 0px;">Data Pribadi</p>
                         </a></li>
-                        <li class="nav-item"><a class="nav-link" href="#step-2">
+                        <li class="nav-item"><a class="nav-link" data-prev="#step-1" href="#step-2">
                             <h4 class="list-group-item-heading">Step 2</h4>
                             <p style="margin: 0px;">Data Orangtua</p>
                         </a></li>
-                        <li class="nav-item"><a class="nav-link" href="#step-3">
+                        <li class="nav-item"><a class="nav-link" data-prev="#step-2" href="#step-3">
                             <h4 class="list-group-item-heading">Step 3</h4>
                             <p style="margin: 0px;">Kuis</p>
                         </a></li>
-                        <li class="nav-item"><a class="nav-link" href="#step-4">
+                        <li class="nav-item"><a class="nav-link" data-prev="#step-3" href="#step-4">
                             <h4 class="list-group-item-heading">Step 4</h4>
                             <p style="margin: 0px;">Buat Akun</p>
                         </a></li>
@@ -121,7 +121,7 @@
                             <br/>
                             <div class="form-group justify-content-center">
                                 <div class="col-md-12">
-                                    <a class="nav-link col-md-12 btn btn-lg btn-primary" href="#step-2">Selanjutnya</a>
+                                    <a class="nav-link col-md-12 btn btn-lg btn-primary" data-prev="#step-1" href="#step-2">Selanjutnya</a>
                                 </div>
                             </div>
 
@@ -183,7 +183,7 @@
                                 <div class="col-md-12">
                                     <div class="btn-group btn-group-lg col-md-12" role="group">
                                         <a class="nav-link col-md-6 btn btn-info" href="#step-1">Sebelumnya</a>
-                                        <a class="nav-link col-md-6 btn btn-primary" href="#step-3">Selanjutnya</a>
+                                        <a class="nav-link col-md-6 btn btn-primary" data-prev="#step-2" href="#step-3">Selanjutnya</a>
                                     </div>
                                 </div>
                             </div>
@@ -209,7 +209,7 @@
                                 <div class="col-md-12">
                                     <div class="btn-group btn-group-lg col-md-12" role="group">
                                         <a class="nav-link col-md-6 btn btn-info" href="#step-2">Sebelumnya</a>
-                                        <a class="nav-link col-md-6 btn btn-primary" href="#step-4">Selanjutnya</a>
+                                        <a class="nav-link col-md-6 btn btn-primary" data-prev="#step-3" href="#step-4">Selanjutnya</a>
                                     </div>
                                 </div>
                             </div>
@@ -220,7 +220,7 @@
                             <div class="form-group justify-content-center">
         
                                 <div class="form-group row">
-                                    <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
+                                    <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('Alamat Email') }}</label>
         
                                     <div class="col-md-6">
                                         <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required>
@@ -248,7 +248,7 @@
                                 </div>
         
                                 <div class="form-group row">
-                                    <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('Confirm Password') }}</label>
+                                    <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('Konfirmasi') }}</label>
         
                                     <div class="col-md-6">
                                         <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
@@ -272,12 +272,28 @@
 <script type="text/javascript">
 $(document).ready(function() {
     $('a.nav-link').click(function() {
-        $('a.nav-link').removeClass('active');
-        $(this)
-        var target = $(this).attr('href');
-        $('a[href="'+target+'"]').addClass('active');
-        $('div.steps').hide();
-        $(target).fadeIn();
+        var ln = 0;
+        var current = $(this).data('prev');
+        var step = $(current +' :input').serializeArray();
+        
+        $.each(step, function(i, item) {
+            if(item.value) {
+                ln += 1;
+                $('[name="'+item.name+'"]').removeClass('is-invalid');
+            } else {
+                $('[name="'+item.name+'"]').addClass('is-invalid');
+            }
+        });
+        if(ln != step.length) {
+            alert('Mohon lengkapi formulir!');
+        } else {
+            $('a.nav-link').removeClass('active');
+            $(this)
+            var target = $(this).attr('href');
+            $('a[href="'+target+'"]').addClass('active');
+            $('div.steps').hide();
+            $(target).fadeIn();
+        }
 
         return false;
     });

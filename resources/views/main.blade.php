@@ -78,7 +78,11 @@
           <li><a href="#about">Tentang Kami</a></li>
           <li><a href="#services">Bidang Kursus</a></li>
           <li><a href="#contact">Kontak</a></li>
+          @guest
           <li><a href="#" data-toggle="modal" data-target="#loginModal" class="btn-get-started">Login</a></li>
+          @else
+          <li><a href="{{ url('home') }}">Dashboard</a></li>
+          @endguest
         </ul>
       </nav><!-- #nav-menu-container -->
     </div>

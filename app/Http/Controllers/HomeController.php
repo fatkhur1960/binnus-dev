@@ -18,6 +18,7 @@ class HomeController extends Controller
 {
     protected $peserta;
     protected $order_count;
+    protected $confirm;
 
     public function __construct()
     {
@@ -26,6 +27,7 @@ class HomeController extends Controller
             if(Auth::user()->hasRole('user')) {
                 $this->peserta = ModelPeserta::where('id_user', Auth::user()->id)->first();
                 $this->order_count = ModelOrder::where('id_peserta', $this->peserta->id_peserta)->where('status', 'Pending')->get()->count();
+                $this->confirm = ModelOrder::where('status', 'Processing')->get()->count();
             }
     
             return $next($request);
@@ -38,8 +40,9 @@ class HomeController extends Controller
         $paket = ModelPaket::all();
         $sumber = ModelSumber::all();
         $count = $this->order_count;
+        $confirm = $this->confirm;
         
-        return view('home.dashboard', compact('agama','paket','sumber','count'));
+        return view('home.dashboard', compact('agama','paket','sumber','count','confirm'));
     }
 
     public function profile()
@@ -57,11 +60,11 @@ class HomeController extends Controller
         $foto = $request->file('file_foto');
         $kk = $request->file('file_kk');
 
-        if($foto->getSize() > 500000 || $kk->getSize() > 800000) {
+        if($foto->getSize() > 512000 || $kk->getSize() > 768000) {
             return redirect()->back()->withErrors(['foto' => 'Ukuran foto terlalu besar', 'kk' => 'Ukuran file KK terlalu besar'])->withInput();
-        } elseif($foto->getSize() > 500000) {
+        } elseif($foto->getSize() > 512000) {
             return redirect()->back()->withErrors(['msg' => 'Ukuran foto terlalu besar'])->withInput();
-        } elseif($kk->getSize() > 800000) {
+        } elseif($kk->getSize() > 768000) {
             return redirect()->back()->withErrors(['msg' => 'Ukuran file KK terlalu besar'])->withInput();
         } else {
             $destinationPath = 'uploads/';
@@ -112,8 +115,8 @@ class HomeController extends Controller
                 $peserta->nama_wali = $request->input('nama_wali');
                 $peserta->telp_wali = $request->input('telp_wali');
                 $peserta->id_sumber = $request->input('id_sumber');
-                $peserta->file_foto = 'uploads/foto' . $file_foto;
-                $peserta->file_kk = 'uploads/kk' . $file_kk;
+                $peserta->file_foto = 'uploads/foto/' . $file_foto;
+                $peserta->file_kk = 'uploads/kk/' . $file_kk;
                 $peserta->save();
                 
                 return redirect()->back()->with('success','Profile berhasil disimpan.');

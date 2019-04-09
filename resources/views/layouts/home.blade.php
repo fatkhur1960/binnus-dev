@@ -119,6 +119,9 @@
                                             Pembayaran <span class="badge pull-right badge-secondary">{{ $count }}</span>
                                         </a>
                                         @endrole
+                                        <a href="{{ url('home/akun') }}" class="list-group-item list-group-item-action">
+                                            Pengaturan Akun
+                                        </a>
                                         <a href="{{ route('logout') }}"
                                             onclick="event.preventDefault();
                                             document.getElementById('logout-form').submit();" class="list-group-item list-group-item-action">Keluar</a>

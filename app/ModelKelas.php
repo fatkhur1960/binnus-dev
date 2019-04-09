@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class ModelKelas extends Model
 {
@@ -29,5 +30,18 @@ class ModelKelas extends Model
     public function pembayaran()
     {
         return $this->belongsTo(ModelOrder::class, 'id_peserta', 'id_peserta');
+    }
+
+    public function getPeserta($id_paket, $id_jadwal) 
+    {
+        $data = DB::table($this->table)
+            ->select('tbl_kelas.*', 'tbl_peserta.*')
+            ->leftJoin('tbl_peserta', function($join) {
+                $join->on('tbl_peserta.id_peserta','=','tbl_kelas.id_peserta');
+            })
+            ->where('tbl_kelas.id_paket', $id_paket)
+            ->where('tbl_kelas.id_jadwal', $id_jadwal);
+
+        return $data->orderBy('tbl_peserta.no_induk','ASC')->get();
     }
 }
