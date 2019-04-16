@@ -71,32 +71,41 @@
                     <div class="col-md-4 date">
                         <input type="text" value="{{ $time[1] }}" placeholder="Selesai" name="selesai" class="form-control"/>
                     </div>
-                    <script type="text/javascript">
-                        (function($){
-                            $(function(){
-                                $('input[name="mulai"]').datetimepicker({
-                                    "allowInputToggle": true,
-                                    "showClose": true,
-                                    "showClear": true,
-                                    "showTodayButton": true,
-                                    "format": "HH:mm",
-                                });
-                                $('input[name="selesai"]').datetimepicker({
-                                    "allowInputToggle": true,
-                                    "showClose": true,
-                                    "showClear": true,
-                                    "showTodayButton": true,
-                                    "format": "HH:mm",
-                                });
-                            });
-                        })(jQuery);
-                    </script>
+                </div>
+                <div class="form-group row" >
+                    <label class="col-4 col-form-label" for="waktu">Periode</label>
+                    <div class="col-8">
+                        <input type="text" name="periode" class="form-control{{ $errors->has('periode') ? ' is-invalid' : '' }}"/>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4">
                 <input name="submit" type="submit" class="btn btn-primary" value="Perbarui">
+                <a href="javascript:history.back(-1);" class="btn btn-warning">Batalkan</a>
             </div>
         </div>
     </form>
 </div>
+@endsection
+@section('script')
+<script type="text/javascript">
+(function($){
+    $(function(){
+        $('input[name="mulai"]').datetimepicker({
+            "allowInputToggle": true,
+            "showClose": true,
+            "showClear": true,
+            "showTodayButton": true,
+            "format": "HH:mm",
+        });
+        $('input[name="selesai"]').datetimepicker({
+            "allowInputToggle": true,
+            "showClose": true,
+            "showClear": true,
+            "showTodayButton": true,
+            "format": "HH:mm",
+        });
+    });
+})(jQuery);
+</script>
 @endsection

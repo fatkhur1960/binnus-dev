@@ -25,7 +25,7 @@
                 <th>NIK</th>
                 <th>Nama</th>
                 <th>TTL</th>
-                <th>Alamat</th>
+                <th>L/P</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -80,7 +80,7 @@ function getDataPeserta(id_jadwal) {
             table.empty();
             if(res.data.length > 0) {
                 $.each(res.data, function(i, item) {
-                    table.append('<tr><td>'+item.no_induk+'</td><td>'+item.nik+'</td><td>'+item.nama_lengkap+'</td><td>'+item.ttl+'</td><td>'+item.alamat_rumah+'</td><td>Detail</td></tr>');
+                    table.append('<tr><td>'+item.no_induk+'</td><td>'+item.nik+'</td><td>'+item.nama_lengkap+'</td><td>'+item.ttl+'</td><td>'+item.jen_kel+'</td><td>Detail</td></tr>');
                 });
             } else {
                 table.append('<tr><td colspan="6" align="center">Tidak ada data</td></tr>');

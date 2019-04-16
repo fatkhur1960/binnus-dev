@@ -22,16 +22,29 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
     <link rel="stylesheet" href="{{ url('css/bootstrap-datetimepicker.min.css') }}" type="text/css" media="all" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" type="text/css" href="{{ url('css/main.css') }}"/>
     <script src="{{ url('js/jquery.js') }}"></script>
+    <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
     <script type="text/javascript" src="{{ url('js/bootstrap-datetimepicker.min.js') }}"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script type="text/javascript">
+    $(document).ajaxStart(function(e) {
+        $("#loader").show();
+    });
+
+    $(document).ajaxStop(function(e) {
+        $("#loader").hide();
+    });
+    </script>
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
+        <nav class="navbar navbar-dark bg-dark navbar-expand-md navbar-laravel">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     BINNUS Wonosobo
@@ -141,6 +154,28 @@
                 </div>
             </div>
         </main>
+    </div>
+    <div id="loader" class="d-flex justify-content-center align-items-center">
+        <div class="loader-main">
+            <div class="spinner-grow text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-secondary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-success" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-danger" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-warning" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-info" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
     </div>
     @if (View::hasSection('script'))
         @yield('script')

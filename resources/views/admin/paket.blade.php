@@ -48,7 +48,7 @@
     </form>
 
     <div class="table-responsive mb-3">
-        <table class="table table-border table-striped">
+        <table class="table table-sm table-border table-striped">
             <thead>
                 <tr>
                     <th width="30">No.</th>

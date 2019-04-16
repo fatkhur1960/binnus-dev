@@ -14,115 +14,206 @@
         Tolong isi form dengan benar!
     </div>
     @endif
-    <form method="post" class="col-md-12 mb-3" action="{{ url('/home/jadwal-kursus') }}">
-        @csrf
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group row">
-                    <label for="id_paket" class="col-4 col-form-label">Paket</label> 
-                    <div class="col-8">
-                        <select name="id_paket" class="custom-select{{ $errors->has('id_paket') ? ' is-invalid' : '' }}">
-                        <option value="">-- Pilih Paket --</option>
+    <div class="message"></div>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <form action="" class="row" method="GET">
+                <div class="col-md-4">
+                    <a href="#" data-toggle="modal" data-target="#jadwalModal" class="btn btn-primary">Tambah Jadwal</a>
+                </div>
+                <div class="col-md-8 form-inline justify-content-end">
+                    <select name="id_paket" class="mr-sm-2 custom-select{{ $errors->has('id_paket') ? ' is-invalid' : '' }}">
+                        <option value="">-- Paket --</option>
                         @foreach ($paket as $item)
-                           <option value="{{ $item->id_paket }}">{{ $item->nama_paket }}</option>
+                        <option {{ $req->input('id_paket') == $item->id_paket ? "selected" : "" }} value="{{ $item->id_paket }}">{{ $item->nama_paket }}</option>
                         @endforeach
-                        </select>
-                    </div>
+                    </select>
+                    <input type="submit" value="Filter" class="btn btn-primary">
                 </div>
-                <div class="form-group row">
-                    <label for="hari" class="col-4 col-form-label">Hari</label> 
-                    <div class="col-4">
-                        <select name="hari_1" class="custom-select{{ $errors->has('hari_1') ? ' is-invalid' : '' }}">
-                            <option value="">-- Hari --</option>
-                            @foreach ($hari as $item)
-                                <option value="{{ $item }}">{{ $item }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-4">
-                        <select name="hari_2" class="custom-select{{ $errors->has('hari_2') ? ' is-invalid' : '' }}">
-                            <option value="">-- Hari --</option>
-                            @foreach ($hari as $item)
-                                <option value="{{ $item }}">{{ $item }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group row" >
-                    <label class="col-4 col-form-label" for="waktu">Kuota</label>
-                    <div class="col-8">
-                        <input type="number" name="kuota" class="form-control{{ $errors->has('kuota') ? ' is-invalid' : '' }}"/>
-                    </div>
-                </div>
-                <div class="form-group row" >
-                    <label class="col-4 col-form-label" for="waktu">Waktu</label>
-                    <div class="col-md-4 mb-3 date">
-                        <input type="text" placeholder="Mulai" name="mulai" class="form-control{{ $errors->has('mulai') ? ' is-invalid' : '' }}"/>
-                    </div>
-                    <div class="col-md-4 date">
-                        <input type="text" placeholder="Selesai" name="selesai" class="form-control{{ $errors->has('selesai') ? ' is-invalid' : '' }}"/>
-                    </div>
-                    <script type="text/javascript">
-                        (function($){
-                            $(function(){
-                                $('input[name="mulai"]').datetimepicker({
-                                    "allowInputToggle": true,
-                                    "showClose": true,
-                                    "showClear": true,
-                                    "showTodayButton": true,
-                                    "format": "HH:mm",
-                                });
-                                $('input[name="selesai"]').datetimepicker({
-                                    "allowInputToggle": true,
-                                    "showClose": true,
-                                    "showClear": true,
-                                    "showTodayButton": true,
-                                    "format": "HH:mm",
-                                });
-                            });
-                        })(jQuery);
-                    </script>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <input name="submit" type="submit" class="btn btn-primary" value="Simpan">
-            </div>
+            </form>
         </div>
-    </form>
-
+    </div>
     <div class="table-responsive mb-3">
-        <table class="table table-border table-striped">
+        <table class="table table-hover table-border table-striped">
             <thead>
                 <tr>
                     <th width="30">No.</th>
                     <th>Paket</th>
+                    <th>Periode</th>
                     <th>Hari</th>
                     <th>Kuota</th>
                     <th>Waktu</th>
-                    <th width="140">Aksi</th>
+                    <th width="190">Aksi</th>
                 </tr>
             </thead>
             <tbody>
+            @if ($jadwal->count() > 0)
                 @foreach ($jadwal as $row)
-                <tr>
+                <tr class="data-{{ $row->id_jadwal }}">
                     <td>{{ $num++ }}</td>
                     <td>{{ $row->paket->nama_paket }}</td>
+                    <td>{{ $row->periode }}</td>
                     <td>{{ $row->hari }}</td>
                     <td>{{ $row->kuota }}</td>
                     <td>{{ $row->waktu }}</td>
-                    <td class="d-flex justify-content-start">
-                        <a style="padding: 0px;" class="btn btn-link" href="{{ url('home/jadwal-kursus/' . $row->id_jadwal . '/edit') }}">Edit</a> &nbsp;|&nbsp; 
-                        <form method="post" action="{{ url('home/jadwal-kursus/' . $row->id_jadwal) }}">
-                            @csrf
-                            <input type="hidden" name="_method" value="DELETE">
-                            <input onclick="var x = confirm('Hapus jadwal ini?'); if(x) { return true; }; return false;" type="submit" value="Hapus" style="padding: 0px;" class="btn btn-link">
-                        </form>
+                    <td>
+                        <a href="#" onclick="javascript:editJadwal('{{ url('home/jadwal-kursus/' . $row->id_jadwal) }}');return false;">Edit</a> &nbsp;|&nbsp; 
+                        <a href="{{ url('home/') }}">Peserta</a> &nbsp;|&nbsp; 
+                        <a href="#" onclick="javascript:hapusJadwal('{{ url('home/jadwal-kursus/' . $row->id_jadwal) }}', '.data-{{ $row->id_jadwal }}');return false;">Hapus</a>
                     </td>
                 </tr>
                 @endforeach
+            @else
+                <tr>
+                    <td colspan="7" align="center">Tidak ada data</td>
+                </tr>
+            @endif
             </tbody>
         </table>
     </div>
-    {{ $jadwal->links() }}
+    @if ($req->input('id_paket'))
+        {{ $jadwal->appends(['id_paket' => $req->input('id_paket')])->links() }}
+    @else
+        {{ $jadwal->links() }}
+    @endif
 </div>
+
+<div class="modal fade" id="jadwalModal" tabindex="-1" role="dialog" aria-labelledby="jadwalModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form id="formJadwal" method="post" class="col-md-12 mb-3" action="{{ url('/home/jadwal-kursus') }}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="jadwalModalLabel">{{ __('Tambah Jadwal') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @csrf
+                    <div class="form-group row">
+                        <label for="id_paket" class="col-4 col-form-label">Paket</label> 
+                        <div class="col-8">
+                            <select name="id_paket" class="custom-select{{ $errors->has('id_paket') ? ' is-invalid' : '' }}">
+                            <option value="">-- Pilih Paket --</option>
+                            @foreach ($paket as $item)
+                            <option value="{{ $item->id_paket }}">{{ $item->nama_paket }}</option>
+                            @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" >
+                        <label class="col-4 col-form-label" for="waktu">Periode</label>
+                        <div class="col-8">
+                            <input type="text" placeholder="Periode" name="periode" class="form-control{{ $errors->has('periode') ? ' is-invalid' : '' }}"/>
+                        </div>
+                    </div>
+                    <div class="form-group row" >
+                        <label class="col-4 col-form-label" for="waktu">Kuota</label>
+                        <div class="col-8">
+                            <input type="number" name="kuota" class="form-control{{ $errors->has('kuota') ? ' is-invalid' : '' }}"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="hari" class="col-4 col-form-label">Hari</label> 
+                        <div class="col-4">
+                            <select name="hari_1" class="custom-select{{ $errors->has('hari_1') ? ' is-invalid' : '' }}">
+                                <option value="">-- Hari --</option>
+                                @foreach ($hari as $item)
+                                    <option value="{{ $item }}">{{ $item }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <select name="hari_2" class="custom-select{{ $errors->has('hari_2') ? ' is-invalid' : '' }}">
+                                <option value="">-- Hari --</option>
+                                @foreach ($hari as $item)
+                                    <option value="{{ $item }}">{{ $item }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" >
+                        <label class="col-4 col-form-label" for="waktu">Waktu</label>
+                        <div class="col-md-4 date">
+                            <input type="text" placeholder="Mulai" name="mulai" class="form-control{{ $errors->has('mulai') ? ' is-invalid' : '' }}"/>
+                        </div>
+                        <div class="col-md-4 date">
+                            <input type="text" placeholder="Selesai" name="selesai" class="form-control{{ $errors->has('selesai') ? ' is-invalid' : '' }}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection
+@section('script')
+<script type="text/javascript">
+(function($){
+    $(function(){
+        $('input[name="mulai"]').datetimepicker({
+            "allowInputToggle": true,
+            "showClose": true,
+            "showClear": true,
+            "showTodayButton": true,
+            "format": "HH:mm",
+        });
+        $('input[name="selesai"]').datetimepicker({
+            "allowInputToggle": true,
+            "showClose": true,
+            "showClear": true,
+            "showTodayButton": true,
+            "format": "HH:mm",
+        });
+        $('input[name="periode"]').daterangepicker({
+            singleDatePicker: true,
+            // startDate: moment().startOf('hour'),
+            // endDate: moment().startOf('hour').add(32, 'hour'),
+            locale: {
+                format: 'MM/YYYY'
+            }
+        });
+    });
+})(jQuery);
+
+const editJadwal = function(url) {
+    var modal = $('div#jadwalModal');
+    var form = modal.find('form#formJadwal');
+    $.getJSON(url, function(result, status) {
+        if(status == 'success') {
+            var day = result.hari.split('-');
+            var time = result.waktu.split('-');
+            modal.find('#jadwalModalLabel').text('Edit Jadwal');
+            form.attr('action', url);
+            form.prepend('<input type="hidden" name="_method" value="PATCH">');
+            form.find('[name="id_paket"]').val(result.id_paket);
+            form.find('[name="id_paket"]').attr('disabled',true);
+            form.find('[name="periode"]').val(result.periode);
+            form.find('[name="periode"]').attr('readonly',true);
+            form.find('[name="kuota"]').val(result.kuota);
+            form.find('[name="hari_1"]').val(day[0]);
+            form.find('[name="hari_2"]').val(day[1]);
+            form.find('[name="mulai"]').val(time[0]);
+            form.find('[name="selesai"]').val(time[1]);
+            modal.modal('show');
+        }
+    });
+}
+const hapusJadwal = function(url, data) {
+    var hapus = confirm("Hapus jadwal ini?");
+    if(hapus) {
+        $.post(url, {
+            "_token": $('meta[name="csrf-token"]').attr('content'),
+            "_method": "DELETE"
+        }, function(res, status) {
+            $('div.message').append('<div class="alert alert-success">'+res.message+'</div>');
+            $('tr').remove(data);
+        });
+    }
+}
+</script>   
 @endsection

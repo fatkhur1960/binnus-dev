@@ -10,7 +10,7 @@ class ModelJadwal extends Model
     public $timestamps = false;
     protected $primaryKey = 'id_jadwal';
     protected $table = 'tbl_jadwal';
-    protected $fillable = ['id_paket', 'hari', 'kuota', 'waktu'];
+    protected $fillable = ['id_paket', 'periode', 'hari', 'kuota', 'waktu'];
 
     public function paket()
     {

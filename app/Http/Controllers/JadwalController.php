@@ -14,13 +14,15 @@ class JadwalController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index(Request $req)
     {
         $num = 1;
+        $perPage = 20;
         $hari = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-        $jadwal = ModelJadwal::orderBy('id_jadwal', 'DESC')->paginate('20');
+        $jadwal = $req->input('id_paket') ? ModelJadwal::where('id_paket',$req->input('id_paket'))->orderBy('id_jadwal', 'DESC')->paginate($perPage) :
+            ModelJadwal::orderBy('id_jadwal', 'DESC')->paginate($perPage);
         $paket = ModelPaket::all();
-        return view('admin.jadwal', compact('jadwal', 'hari', 'paket', 'num'));
+        return view('admin.jadwal', compact('jadwal', 'hari', 'paket', 'num', 'req'));
     }
 
     public function create()
@@ -32,8 +34,9 @@ class JadwalController extends Controller
     {
         $val = Validator::make($request->all(), [
             'id_paket'  => 'required|numeric',
-            'hari_1'     => 'required',
-            'hari_2'     => 'required',
+            'periode'   => 'required',
+            'hari_1'    => 'required',
+            'hari_2'    => 'required',
             'kuota'     => 'required|numeric',
             'mulai'     => 'required',
             'selesai'   => 'required'
@@ -41,10 +44,11 @@ class JadwalController extends Controller
 
         if(!$val->fails()) {
             $data = [
-                'id_paket'   => $request->input('id_paket'),
+                'id_paket'  => $request->input('id_paket'),
+                'periode'   => $request->input('periode'),
                 'hari'      => $request->input('hari_1') . '-' . $request->input('hari_2'),
-                'kuota'      => $request->input('kuota'),
-                'waktu'      => $request->input('mulai') . '-' . $request->input('selesai'),
+                'kuota'     => $request->input('kuota'),
+                'waktu'     => $request->input('mulai') . '-' . $request->input('selesai'),
             ];
             ModelJadwal::create($data);
 
@@ -58,7 +62,8 @@ class JadwalController extends Controller
 
     public function show($id)
     {
-        //
+        $jadwal = ModelJadwal::find($id);
+        return response()->json($jadwal, 200);
     }
 
     public function edit($id)
@@ -75,8 +80,8 @@ class JadwalController extends Controller
     {
         $jadwal = ModelJadwal::find($id);
         $val = Validator::make($request->all(), [
-            'hari_1'     => 'required',
-            'hari_2'     => 'required',
+            'hari_1'    => 'required',
+            'hari_2'    => 'required',
             'kuota'     => 'required|numeric',
             'mulai'     => 'required',
             'selesai'   => 'required'
@@ -84,8 +89,8 @@ class JadwalController extends Controller
 
         if(!$val->fails()) {
             $jadwal->hari    = $request->input('hari_1') . '-' . $request->input('hari_2');
-            $jadwal->kuota    = $request->input('kuota');
-            $jadwal->waktu    = $request->input('mulai') . '-' . $request->input('selesai');
+            $jadwal->kuota   = $request->input('kuota');
+            $jadwal->waktu   = $request->input('mulai') . '-' . $request->input('selesai');
             $jadwal->save();
 
             return redirect('/home/jadwal-kursus')->with('success','Jadwal telah diperbarui');
@@ -99,8 +104,14 @@ class JadwalController extends Controller
     public function destroy($id)
     {
         $data = ModelJadwal::find($id);
-        $data->delete();
+        if($data->delete()) {
+            $msg = ['message' => 'Jadwal telah dihapus'];
+            return response()->json($msg, 200);
+        } else {
+            $msg = ['message' => 'Gagal menghapus jadwal'];
+            return response()->json($msg, 500);
+        }
 
-        return redirect('/home/jadwal-kursus')->with('success','Jadwal telah dihapus');
+        // return redirect('/home/jadwal-kursus')->with('success','Jadwal telah dihapus');
     }
 }

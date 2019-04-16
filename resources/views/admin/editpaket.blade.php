@@ -39,6 +39,7 @@
             </div>
             <div class="col-md-4">
                 <input name="submit" type="submit" class="btn btn-primary" value="Perbarui">
+                <a href="javascript:history.back(-1);" class="btn btn-warning">Batalkan</a>
             </div>
         </div>
     </form>
