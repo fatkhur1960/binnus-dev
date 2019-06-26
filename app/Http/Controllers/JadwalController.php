@@ -40,6 +40,8 @@ class JadwalController extends Controller
             'kuota'     => 'required|numeric',
             'mulai'     => 'required',
             'selesai'   => 'required'
+        ], [
+            'required' => 'Field :attribute tidak boleh kosong!',
         ]);
 
         if(!$val->fails()) {
@@ -56,6 +58,7 @@ class JadwalController extends Controller
         } else {
             return redirect('/home/jadwal-kursus')
                 ->withErrors($val)
+                ->with('error', $val->errors()->first())
                 ->withInput();
         }
     }
@@ -85,6 +88,8 @@ class JadwalController extends Controller
             'kuota'     => 'required|numeric',
             'mulai'     => 'required',
             'selesai'   => 'required'
+        ],[
+            'required' => 'Field :attribute tidak boleh kosong!',
         ]);
 
         if(!$val->fails()) {

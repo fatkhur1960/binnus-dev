@@ -53,9 +53,9 @@ $(document).ready(function() {
             success: function(res) {
                 $('select#id_jadwal').removeAttr('disabled');
                 $('select#id_jadwal').empty();
-                $('select#id_jadwal').append('<option value="">-- Pilih Kelas --</option>');
+                $('select#id_jadwal').append('<option value="">-- Pilih Periode --</option>');
                 $.each(res.jadwal, function(index, item) {
-                    $('select#id_jadwal').append('<option value="'+item.id_jadwal+'">'+item.hari+' '+item.waktu+'</option>');
+                    $('select#id_jadwal').append('<option value="'+item.id_jadwal+'">'+item.periode+'</option>');
                 });
             }
         });
@@ -80,7 +80,8 @@ function getDataPeserta(id_jadwal) {
             table.empty();
             if(res.data.length > 0) {
                 $.each(res.data, function(i, item) {
-                    table.append('<tr><td>'+item.no_induk+'</td><td>'+item.nik+'</td><td>'+item.nama_lengkap+'</td><td>'+item.ttl+'</td><td>'+item.jen_kel+'</td><td>Detail</td></tr>');
+                    var url = "{{ url('/home/peserta/') }}/"+item.id_peserta;
+                    table.append('<tr><td>'+item.no_induk+'</td><td>'+item.nik+'</td><td>'+item.nama_lengkap+'</td><td>'+item.ttl+'</td><td>'+item.jen_kel+'</td><td><a href="'+url+'">Detail</td></tr>');
                 });
             } else {
                 table.append('<tr><td colspan="6" align="center">Tidak ada data</td></tr>');

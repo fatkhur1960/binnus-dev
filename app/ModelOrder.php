@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 class ModelOrder extends Model
 {
     protected $table = 'tbl_order';
-    protected $fillable = ['id_peserta','id_paket','total_harga','status','confirm_file'];
+    protected $fillable = ['id_peserta','id_paket','total_harga','status','confirm_file','updated_at'];
 
     public function paket() {
         return $this->belongsTo(ModelPaket::class, 'id_paket', 'id_paket');

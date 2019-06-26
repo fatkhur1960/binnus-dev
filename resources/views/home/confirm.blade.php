@@ -4,11 +4,11 @@
 <div class="card-header">Pembayaran</div>
 
 <div class="card-body">
-    @if (\Session::has('success'))
+    {{-- @if (\Session::has('success'))
     <div class="alert alert-success">
         {{ \Session::get('success') }}
     </div>
-    @endif
+    @endif --}}
     <form action="" method="get" class="form-inline">
         <select name="status" class="custom-select mb-2 mr-sm-2">
             <option value="">-- Status --</option>
@@ -40,7 +40,7 @@
                     <td scope="row">{{ $num++ }}</td>
                     <td>{{ $row->paket->nama_paket }}</td>
                     <td>{{ $row->created_at }}</td>
-                    <td>{{ $row->updated_at }}</td>
+                    <td>{{ $row->status == 'Processing' || $row->status == 'Confirmed' ? $row->updated_at : '-' }}</td>
                     <td>Rp. {{ number_format($row->total_harga) }}</td>
                     <td>
                         @if($row->status == 'Pending')
@@ -59,7 +59,7 @@
                             </button>
                             <div class="dropdown-menu" style="position: absolute;z-index: 99999;">
                                 <a data-id="{{ $row->id }}" data-nik="{{ $row->peserta->nik }}" data-toggle="modal" data-target="#confirmModal" class="dropdown-item" href="#">Konfirmasi Pembayaran</a>
-                                <a onclick="var x = confirm('Batalkan Pembayaran?'); if(x) {return true;} return false;" class="dropdown-item" href="{{ url('home/cancel/' . $row->id) }}">Batalkan Pembayaran</a>
+                                <a onclick="cancel(event, '{{ url('home/cancel/' . $row->id) }}');return false;" class="dropdown-item" href="#">Batalkan Transaksi</a>
                             </div>
                         </div>
                     </td>
@@ -110,5 +110,21 @@ $(document).ready(function() {
         modal.find('.modal-body input[name="nik"]').val(nik);
     });
 });
+function cancel(e, link) {
+    e.preventDefault();
+    Swal.fire({
+        title: 'Batalkan transaksi?',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya',
+        cancelButtonText: 'Tidak'
+    }).then((result) => {
+        if (result.value) {
+            window.location.href = link;
+        }
+    });
+}
 </script>
 @endsection

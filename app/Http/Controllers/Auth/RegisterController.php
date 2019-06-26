@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class RegisterController extends Controller
 {
@@ -81,6 +82,11 @@ class RegisterController extends Controller
 
     private function save_profile($data, $user)
     {
+        $idMax = ModelPeserta::max('no_induk');
+        $today = date("Ymd");
+        $NoUrut = (int) substr($idMax, 8, 4);
+        $NoUrut++;
+        $NewID = $today .sprintf('%04s', $NoUrut);
         $peserta = ModelPeserta::create([
             'nik' => $data['nik'],
             'id_user' => $user->id,

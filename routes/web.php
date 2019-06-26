@@ -27,8 +27,9 @@ Route::middleware('auth')->group(function() {
                 'jadwal-kursus' => 'JadwalController',
                 'histori-pembayaran'    => 'OrderController',
                 'peserta'               => 'PesertaController'
-            ]);
+            ], ['middleware' => 'param_filter']);
             Route::post('get-peserta', 'PesertaController@getPeserta');
+            Route::get('kelas/peserta/{id_kelas}/{id_jadwal}', 'PesertaController@pesertaByClass');
         });
 
         Route::group(['middleware' => ['role:user']], function () {

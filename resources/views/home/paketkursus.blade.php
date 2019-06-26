@@ -10,47 +10,20 @@
         (<a href="{{ url('home/profil') }}" class="alert-link">di sini</a>) sebelum mengambil paket kursus
     </div>
     @else
-    @if (\Session::has('success'))
+    {{-- @if (\Session::has('success'))
     <div class="alert alert-success">
         {{ \Session::get('success') }}
     </div>
-    @endif
-    <form method="post" class="col-md-12 mb-3" action="{{ url('/home/ambil-paket') }}">
-        @csrf
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group row">
-                    <label for="id_paket" class="col-4 col-form-label">Paket</label> 
-                    <div class="col-8">
-                        <select name="id_paket" class="custom-select{{ $errors->has('id_paket') ? ' is-invalid' : '' }}">
-                            <option value="">-- Pilih Paket --</option>
-                            @foreach ($paket as $item)
-                                <option value="{{ $item->id_paket }}">{{ $item->nama_paket }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+    @endif --}}
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <form action="" class="row" method="GET">
+                <div class="col-md-4">
+                    <a href="#" data-toggle="modal" data-target="#paketModal" class="btn btn-primary">Pilih Paket</a>
                 </div>
-                <div class="form-group row">
-                    <label for="id_paket" class="col-4 col-form-label">Biaya</label> 
-                    <div class="col-8">
-                        <input type="text" class="form-control" id="biaya" readonly/>
-                        <input type="hidden" class="form-control" name="harga"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="id_paket" class="col-4 col-form-label">Pertemuan</label> 
-                    <div class="col-8">
-                        <input type="text" class="form-control" id="pertemuan" readonly/>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <input type="hidden" name="id_peserta" value="{{ $user->id_peserta }}"/>
-                <input name="submit" type="submit" class="btn btn-primary" value="Ambil">
-            </div>
+            </form>
         </div>
-    </form>
-
+    </div>
     <div class="table-responsive mb-3">
         <input type="hidden" value="{{ $no = 1 }}"/>
         <table class="table table-border table-sm table-striped">
@@ -62,33 +35,42 @@
                     <th>Jadwal</th>
                     <th>Waktu</th>
                     <th>Status</th>
-                    <th width="140">Operasi</th>
+                    <th>Tanggal</th>
+                    <th width="140">Aksi</th>
                 </tr>
             </thead>
             <tbody>
             @foreach ($kelas as $item)
             <tr>
                 <td>{{ $no++ }}</td>
-                <td>{{ $item->peserta->no_induk }}</td>
-                <td>{{ $item->paket->nama_paket }}</td>
-                @if($item->id_jadwal != '')
-                <td>{{ $item->jadwal->hari }}</td>
-                <td>{{ $item->jadwal->waktu }} WIB</td>
+                <td>{{ $item->no_induk }}</td>
+                <td>{{ $item->nama_paket }}</td>
+                <td>{{ $item->hari ?? "-" }}</td>
+                <td>{{ $item->waktu ?? "-" }}</td>
+                <td>
+                    @if($item->status == 'Pending')
+                    <span class="badge badge-secondary">{{ $item->status }}</span>
+                    @elseif($item->status == 'Confirmed')
+                    <span class="badge badge-success">{{ $item->status }}</span>
+                    @elseif($item->status == 'Processing')
+                    <span class="badge badge-warning">
+                        {{ $item->status }}
+                    </span>
+                    @else
+                    <span class="badge badge-danger">{{ $item->status }}</span>
+                    @endif
+                </td>
+                <td>{{ $item->created_at }}</td>
+                @if($item->hari == '' && $item->status == 'Confirmed')
+                <td><a href="#" data-toggle="modal" data-target="#ambilJadwal" data-kelas="{{ $item->id_kelas }}" data-paket="{{ $item->id_paket }}">Ambil Jadwal</a></td>
+                @elseif($item->hari != '' && $item->status == 'Confirmed')
+                <td><a href="#" data-toggle="modal" data-target="#ambilJadwal" data-jadwal="{{ $item->id_jadwal }}" data-kelas="{{ $item->id_kelas }}" data-paket="{{ $item->id_paket }}">Ubah Jadwal</a></td>
                 @else
-                <td>-</td>
-                <td>-</td>
-                @endif
-                @if($item->pembayaran->status == 'Pending')
-                <td>Pembayaran</td>
-                @else
-                <td>Terbayar</td>
-                @endif
-                @if($item->id_jadwal == '' && $item->pembayaran->status == 'Confirmed')
-                <td><a href="#" data-toggle="modal" data-target="#ambilJadwal" data-kelas="{{ $item->id_kelas }}" data-paket="{{ $item->paket->id_paket }}">Ambil Jadwal</a></td>
-                @elseif($item->id_jadwal != '' && $item->pembayaran->status == 'Confirmed')
-                <td><a href="#" data-toggle="modal" data-target="#ambilJadwal" data-jadwal="{{ $item->id_jadwal }}" data-kelas="{{ $item->id_kelas }}" data-paket="{{ $item->paket->id_paket }}">Ubah Jadwal</a></td>
-                @else
+                @if($item->status == 'Pending')
                 <td><a href="{{ url('home/pembayaran?status=Pending') }}">Konfirmasi</a></td>
+                @else
+                <td>-</td>
+                @endif
                 @endif
             </tr>
             @endforeach
@@ -96,6 +78,52 @@
         </table>
     </div>
     @endif
+</div>
+<div class="modal fade" id="paketModal" tabindex="-1" role="dialog" aria-labelledby="paketModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <form method="post" class="col-md-12 mb-3" action="{{ url('/home/ambil-paket') }}">
+            @csrf
+            <input type="hidden" name="id_peserta" value="{{ $user->id_peserta }}"/>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paketModalLabel">{{ __('Pilih Paket') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <label for="id_paket" class="col-4 col-form-label">Paket</label> 
+                        <div class="col-8">
+                            <select name="id_paket" class="custom-select{{ $errors->has('id_paket') ? ' is-invalid' : '' }}">
+                                <option value="">-- Pilih Paket --</option>
+                                @foreach ($paket as $item)
+                                    <option value="{{ $item->id_paket }}">{{ $item->nama_paket }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="id_paket" class="col-4 col-form-label">Biaya</label> 
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="biaya" readonly/>
+                            <input type="hidden" class="form-control" name="harga"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="id_paket" class="col-4 col-form-label">Pertemuan</label> 
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="pertemuan" readonly/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <input name="submit" type="submit" class="btn btn-primary" value="Ambil">
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 @endsection
 @section('script')
@@ -109,6 +137,9 @@
                 </button>
             </div>
             <div class="modal-body">
+                <div class="mb-3">
+                    <strong>Periode : </strong><span id="periode"></span>
+                </div>
                 @csrf
                 <table class="table table-condensed table-sm table-striped">
                     <thead>
@@ -144,7 +175,7 @@ $(document).ready(function(){
                     $('input[name="harga"]').val(result.paket.harga);
                     $('input#pertemuan').val(result.paket.pertemuan + " Kali Pertemuan");
                 } else {
-                    alert('Belum ada jadwal');
+                    alert('Belum ada paket');
                 }
             }
         });
@@ -168,6 +199,7 @@ $(document).ready(function(){
                 if(result) {
                     var link = '';
                     modal.find('.modal-body tbody').empty();
+                    modal.find('span#periode').text(result.periode);
                     $.each(result.jadwal, function(i, item) {
                         if(item.sisa > 0) {
                             link = '<a href="#" onclick="updateJadwal(\''+id_kelas+'\',\''+item.id_jadwal+'\');return false;">Pilih</a>';

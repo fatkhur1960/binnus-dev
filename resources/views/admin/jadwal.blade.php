@@ -4,7 +4,7 @@
 <div class="card-header">Jadwal</div>
 
 <div class="card-body">
-    @if (\Session::has('success'))
+    {{-- @if (\Session::has('success'))
     <div class="alert alert-success">
         {{ \Session::get('success') }}
     </div>
@@ -13,7 +13,7 @@
     <div class="alert alert-danger">
         Tolong isi form dengan benar!
     </div>
-    @endif
+    @endif --}}
     <div class="message"></div>
     <div class="row">
         <div class="col-md-12 mb-3">
@@ -58,8 +58,8 @@
                     <td>{{ $row->waktu }}</td>
                     <td>
                         <a href="#" onclick="javascript:editJadwal('{{ url('home/jadwal-kursus/' . $row->id_jadwal) }}');return false;">Edit</a> &nbsp;|&nbsp; 
-                        <a href="{{ url('home/') }}">Peserta</a> &nbsp;|&nbsp; 
-                        <a href="#" onclick="javascript:hapusJadwal('{{ url('home/jadwal-kursus/' . $row->id_jadwal) }}', '.data-{{ $row->id_jadwal }}');return false;">Hapus</a>
+                        <a data-toggle="modal" data-target="#peserta" href="{{ url('home/kelas/peserta/' . $row->paket->id_paket . '/' . $row->id_jadwal) }}">Peserta</a> &nbsp;|&nbsp; 
+                        <a href="#" onclick="javascript:hapusJadwal(event, '{{ url('home/jadwal-kursus/' . $row->id_jadwal) }}', '.data-{{ $row->id_jadwal }}');return false;">Hapus</a>
                     </td>
                 </tr>
                 @endforeach
@@ -150,6 +150,42 @@
         </form>
     </div>
 </div>
+<div class="modal fade" id="peserta" tabindex="-1" role="dialog" aria-labelledby="pesertaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="jadwalModalLabel">{{ __('Daftar Peserta') }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <strong>Paket: <span id="paket"></span></strong>&nbsp;&nbsp;
+                    <strong>Kelas: <span id="kelas"></span></strong>&nbsp;&nbsp;
+                    <strong>Periode: <span id="periode"></span></strong>&nbsp;&nbsp;
+                </div>
+                <table class="table table-sm table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>No. Induk</th>
+                            <th>NIK</th>
+                            <th>Nama</th>
+                            <th>TTL</th>
+                            <th>L/P</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="6" align="center">Tidak ada data</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 @section('script')
 <script type="text/javascript">
@@ -169,14 +205,11 @@
             "showTodayButton": true,
             "format": "HH:mm",
         });
-        $('input[name="periode"]').daterangepicker({
-            singleDatePicker: true,
-            // startDate: moment().startOf('hour'),
-            // endDate: moment().startOf('hour').add(32, 'hour'),
-            locale: {
-                format: 'MM/YYYY'
-            }
-        });
+        $('input[name="periode"]').datepicker({
+            autoclose: true,
+            minViewMode: 1,
+            format: 'mm/yyyy'
+        }); 
     });
 })(jQuery);
 
@@ -203,17 +236,62 @@ const editJadwal = function(url) {
         }
     });
 }
-const hapusJadwal = function(url, data) {
-    var hapus = confirm("Hapus jadwal ini?");
-    if(hapus) {
-        $.post(url, {
-            "_token": $('meta[name="csrf-token"]').attr('content'),
-            "_method": "DELETE"
-        }, function(res, status) {
-            $('div.message').append('<div class="alert alert-success">'+res.message+'</div>');
-            $('tr').remove(data);
-        });
-    }
+const hapusJadwal = function(e, url, data) {
+    e.preventDefault();
+    Swal.fire({
+        title: 'Hapus jadwal ini?',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Hapus',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.value) {
+            $.post(url, {
+                "_token": $('meta[name="csrf-token"]').attr('content'),
+                "_method": "DELETE"
+            }, function(res, status) {
+                $('tr').remove(data);
+                Swal.fire({
+                    type: 'success',
+                    title: res.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            });
+        }
+    });
 }
+$(document).ready(function() {
+    $('#peserta').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var link = button.attr('href')
+        
+        var table = $(this).find('table > tbody');
+        $.ajax({
+            url: link,
+            type: 'GET',
+            dataType: 'JSON',
+            error: function(err) {
+                console.log(err.responseText);
+            },
+            success: function(res) {
+                $('span#paket').text(res.paket);
+                $('span#kelas').text(res.kelas);
+                $('span#periode').text(res.periode);
+                table.empty();
+                if(res.data.length > 0) {
+                    $.each(res.data, function(i, item) {
+                        var url = "{{ url('/home/peserta/') }}/"+item.id_peserta;
+                        table.append('<tr><td>'+item.no_induk+'</td><td>'+item.nik+'</td><td>'+item.nama_lengkap+'</td><td>'+item.ttl+'</td><td>'+item.jen_kel+'</td><td><a href="'+url+'">Detail</td></tr>');
+                    });
+                } else {
+                    table.append('<tr><td colspan="6" align="center">Tidak ada data</td></tr>');
+                }
+            }
+        });
+    });
+});
 </script>   
 @endsection

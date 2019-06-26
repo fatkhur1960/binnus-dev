@@ -29,7 +29,13 @@ class ModelKelas extends Model
 
     public function pembayaran()
     {
-        return $this->belongsTo(ModelOrder::class, 'id_peserta', 'id_peserta');
+        // $data = DB::table($this->table)
+        //     ->select('tbl_kelas.*', 'tbl_order.*')
+        //     ->leftJoin('tbl_order', function($join) {
+        //         $join->on('tbl_kelas.id_peserta','=','tbl_order.id_peserta');
+        //     })
+        //     ->groubBy('tbl_order.status');
+        // return $this->belongsTo(ModelOrder::class);
     }
 
     public function getPeserta($id_paket, $id_jadwal) 

@@ -25,13 +25,16 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
     <link rel="stylesheet" href="{{ url('css/bootstrap-datetimepicker.min.css') }}" type="text/css" media="all" />
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
     <link rel="stylesheet" type="text/css" href="{{ url('css/main.css') }}"/>
+    @if (View::hasSection('style'))
+        @yield('style')
+    @endif
     <script src="{{ url('js/jquery.js') }}"></script>
     <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
     <script type="text/javascript" src="{{ url('js/bootstrap-datetimepicker.min.js') }}"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script type="text/javascript">
     $(document).ajaxStart(function(e) {
         $("#loader").show();
@@ -43,6 +46,7 @@
     </script>
 </head>
 <body>
+    @include('sweetalert::alert')
     <div id="app">
         <nav class="navbar navbar-dark bg-dark navbar-expand-md navbar-laravel">
             <div class="container">
@@ -73,11 +77,11 @@
                             </li>
                         @else
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }} <span class="caret"></span>
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{ Auth::user()->name }}
                                 </a>
 
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -123,13 +127,13 @@
                                         <!-- User Role -->
                                         @else
                                         <a href="{{ url('home/profil') }}" class="list-group-item list-group-item-action">
-                                            Profil
+                                            Profil Peserta
                                         </a>
                                         <a href="{{ url('home/pilih-paket-kursus') }}" class="list-group-item list-group-item-action">
                                            Paket Kursus
                                         </a>
                                         <a href="{{ url('home/pembayaran') }}" class="list-group-item list-group-item-action">
-                                            Pembayaran <span class="badge pull-right badge-secondary">{{ $count }}</span>
+                                            Pembayaran <span class="badge pull-right badge-secondary">{{ isset($count) ? $count : "" }}</span>
                                         </a>
                                         @endrole
                                         <a href="{{ url('home/akun') }}" class="list-group-item list-group-item-action">
@@ -145,7 +149,7 @@
                                 </div>
                             </div>
                             <div class="col-md-9">
-                                <div class="card">
+                                <div class="card bg-warning">
                                     @yield('content')
                                 </div>
                             </div>

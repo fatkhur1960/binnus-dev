@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use RealRashid\SweetAlert\Facades\Alert;
+
 use Illuminate\Http\Request;
 use Validator;
 use App\ModelPaket;
@@ -27,11 +29,14 @@ class PaketController extends Controller
 
     public function store(Request $request)
     {
+        $messages = [
+            'required' => 'Field :attribute tidak boleh kosong!',
+        ];
         $validator = Validator::make($request->all(), [
             'nama_paket' => 'required',
-            'pertemuan'      => 'required|numeric',
+            'pertemuan'  => 'required|numeric',
             'harga'      => 'required|numeric'
-        ]);
+        ], $messages);
 
         if (!$validator->fails()) {
             $data = [
@@ -43,30 +48,37 @@ class PaketController extends Controller
 
             return redirect('/home/paket-kursus')->with('success','Paket baru telah disimpan');
         } else {
+            // alert()->error('ErrorAlert','Lorem ipsum dolor sit amet.');
             return redirect('/home/paket-kursus')
-                ->withErrors($validator)
-                ->withInput();
+                ->with('error', 'Gagal menyimpan data!')
+                // ->with('error', $validator);
+                ->withErrors($validator);
+                // ->withInput();
         }
     }
 
     public function show($id)
     {
-        //
+        $paket = ModelPaket::find($id);
+        return response()->json($paket, 200);
     }
 
     public function edit($id)
     {
         $paket = ModelPaket::find($id);
-        return view('admin.editpaket', compact('paket'));
+        return response()->json($paket, 200);
     }
 
     public function update(Request $request, $id)
     {
+        $messages = [
+            'required' => 'Field :attribute tidak boleh kosong!',
+        ];
         $validator = Validator::make($request->all(), [
             'nama_paket' => 'required',
             'pertemuan'      => 'required|numeric',
             'harga'      => 'required|numeric'
-        ]);
+        ], $messages);
 
         if (!$validator->fails()) {
             $paket = ModelPaket::find($id);
@@ -78,7 +90,8 @@ class PaketController extends Controller
             return redirect('/home/paket-kursus')->with('success','Paket telah diperbarui');
         } else {
             return redirect('/home/paket-kursus/' . $id . '/edit')
-                ->withErrors($validator)
+                ->with('error', $validator->errors()->first())
+                // ->withErrors($validator)
                 ->withInput();
         }
     }

@@ -9,3 +9,17 @@ div#loader {
     background: rgba(0, 0, 0, .2);
     display: none !important;
 }
+.card {
+    overflow: hidden;
+}
+/* .card {
+    background-color: #ffffff !important;
+    border: 1px solid rgba(0,0,0,.125) !important;
+    overflow: hidden;
+}
+.bg-success .card-header {
+    background-color: #28a745 !important;
+} */
+.card-body {
+    background: white !important;
+}

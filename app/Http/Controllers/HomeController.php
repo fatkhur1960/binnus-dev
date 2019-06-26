@@ -167,6 +167,15 @@ class HomeController extends Controller
         $order->confirm_file = $filename;
         $order->save();
 
+        $to_email = 'fatkhuranonym@gmail.com';
+        $data = array('name'=>"Sam Jose", "body" => "Test mail");
+            
+        Mail::send('emails.mail', $data, function($message) use ($to_email) {
+            $message->to($to_email)
+                    ->subject('Konfirmasi Pembayaran');
+            $message->from('fanonym1960@gmail.com','Binnus-wsb Web');
+        });
+
         return redirect('/home/pembayaran?status=' . $order->status)->with('success','Terima kasih. Permintaan Anda akan segera kami proses.');
     }
 
@@ -176,9 +185,10 @@ class HomeController extends Controller
         $paket = ModelPaket::all();
         $count = $this->order_count;
         $user = ModelPeserta::where('id_user', Auth::user()->id)->first();
-        $kelas = ModelKelas::where('id_peserta', $user->id_peserta)->get();
+        $ins_kelas = new ModelPaket();
+        $kelas = $ins_kelas->list($user->id_peserta)->get();
         
-        return view('home.paketkursus', compact('paket','kelas','user','count'));
+        return view('home.paketkursus', compact('paket', 'kelas','user','count'));
     }
 
     public function ambilPaket(Request $req)
@@ -197,6 +207,11 @@ class HomeController extends Controller
                 'id_paket'   => $req->input('id_paket'),
                 'id_peserta' => $req->input('id_peserta'),
             ];
+
+            $check_kelas = ModelKelas::where($data_kelas)->count();
+            if($check_kelas > 0) {
+                return redirect('/home/pilih-paket-kursus')->with('error','Anda sudah mengambil paket ini');
+            }
 
             $data_order = [
                 'id_paket'      => $req->input('id_paket'),
@@ -227,9 +242,11 @@ class HomeController extends Controller
 
     public function getJadwal(Request $req)
     {
+        $periode = date('m/Y',  strtotime("+1 month"));
         $jadwal = new ModelJadwal();
         return response()->json([
-            'jadwal' => $jadwal->getJadwal($req->input('id_paket'),$req->input('id_jadwal'))
+            'periode' => $periode,
+            'jadwal' => $jadwal->getJadwal($req->input('id_paket'),$req->input('id_jadwal'),$periode)
         ], 200);
     }
 

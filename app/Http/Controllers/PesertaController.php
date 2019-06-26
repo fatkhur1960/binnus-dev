@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\ModelPaket;
 use App\ModelKelas;
+use App\ModelPeserta;
+use App\ModelAgama;
+use App\ModelSumber;
+use App\ModelJadwal;
 
 class PesertaController extends Controller
 {
@@ -42,6 +46,20 @@ class PesertaController extends Controller
         return response()->json(['data' => $peserta], 200);
     }
 
+    public function pesertaByClass(Request $request, $id_paket, $id_jadwal)
+    {
+        $data = new ModelKelas();
+        $paket = ModelPaket::find($id_paket);
+        $jadwal = ModelJadwal::find($id_jadwal);
+        $peserta = $data->getPeserta($id_paket, $id_jadwal);
+        return response()->json([
+            'paket' => $paket->nama_paket,
+            'kelas' => $jadwal->hari . ' ' . $jadwal->waktu,
+            'periode' => $jadwal->periode,
+            'data' => $peserta
+        ], 200);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -71,7 +89,10 @@ class PesertaController extends Controller
      */
     public function show($id)
     {
-        //
+        $agama = ModelAgama::all();
+        $sumber = ModelSumber::all();
+        $peserta = ModelPeserta::find($id);
+        return view('admin.detailpeserta', compact('peserta','agama','sumber'));
     }
 
     /**

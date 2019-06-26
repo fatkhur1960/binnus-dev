@@ -28,7 +28,7 @@
                     <th scope="col">No.</th>
                     <th scope="col">No. Induk</th>
                     <th scope="col">Paket</th>
-                    <th scope="col">Tgl.</th>
+                    <th scope="col">Tanggal</th>
                     <th scope="col">Tgl. Pembayaran</th>
                     <th scope="col">Tagihan</th>
                     <th scope="col">Status</th>
@@ -41,7 +41,7 @@
                     <td>{{ $row->no_induk == '' ? $row->peserta->no_induk : $row->no_induk }}</td>
                     <td>{{ $row->nama_paket == '' ? $row->paket->nama_paket : $row->nama_paket }}</td>
                     <td>{{ $row->created_at }}</td>
-                    <td>{{ $row->updated_at }}</td>
+                    <td>{{ $row->status == 'Processing' || $row->status == 'Confirmed' ? $row->updated_at : '-' }}</td>
                     <td>Rp. {{ number_format($row->total_harga) }}</td>
                     <td>
                         @if($row->status == 'Pending')
@@ -50,8 +50,10 @@
                         <span class="badge badge-success">{{ $row->status }}</span>
                         @elseif($row->status == 'Processing')
                         <a href="#" data-id="{{ $row->id }}" data-toggle="modal" data-target="#confirmModal" class="badge badge-warning">
-                            Lihat Bukti
+                            Detail
                         </a>
+                        @else
+                        <span class="badge badge-danger">{{ $row->status }}</span>
                         @endif
                     </td>
                 </tr>
