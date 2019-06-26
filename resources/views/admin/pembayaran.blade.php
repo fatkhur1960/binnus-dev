@@ -52,7 +52,7 @@
                         <a href="#" data-id="{{ $row->id }}" data-toggle="modal" data-target="#confirmModal" class="badge badge-warning">
                             Detail
                         </a>
-                        @else
+                        @elseif($row->status != "")
                         <span class="badge badge-danger">{{ $row->status }}</span>
                         @endif
                     </td>
@@ -77,6 +77,33 @@
                 </div>
                 <div class="modal-body">
                     @csrf
+                    <table class="table mb-3 table-sm table-strip">
+                        <tr>
+                            <td>Nama</td>
+                            <td>:</td>
+                            <td id="nama"></td>
+                        </tr>
+                        <tr>
+                            <td>Paket Kursus</td>
+                            <td>:</td>
+                            <td id="paket"></td>
+                        </tr>
+                        <tr>
+                            <td>Email</td>
+                            <td>:</td>
+                            <td id="email"></td>
+                        </tr>
+                        <tr>
+                            <td>Tgl. Konfirmasi</td>
+                            <td>:</td>
+                            <td id="tgl"></td>
+                        </tr>
+                        <tr>
+                            <td>Jumlah Transfer</td>
+                            <td>:</td>
+                            <td id="jumlah"></td>
+                        </tr>
+                    </table>
                     <input type="hidden" name="id">
                     <img class="img-fluid rounded mx-auto d-block" id="bukti"/>
                 </div>
@@ -89,23 +116,34 @@
     </div>
 </div>
 <script type="text/javascript">
+var showModal = function(id, target) {
+    var modal = $(target);
+    $.ajax({
+        url: '/home/histori-pembayaran/' + id,
+        type: 'get',
+        dataType: 'json',
+        error: function(err) {
+            console.log(err.responseText);
+        },
+        success: function(res) {
+            console.log(res);
+            var table = modal.find('table.mb-3');
+            table.find('#nama').text(res.nama);
+            table.find('#paket').text(res.kelas);
+            table.find('#email').text(res.email);
+            table.find('#tgl').text(res.history.updated_at);
+            table.find('#jumlah').text(res.jumlah);
+            modal.find('.modal-body img#bukti').attr('src', "{{ url('uploads/confirm') }}/" + res.history.confirm_file);
+        }
+    });
+    modal.find('.modal-body input[name="id"]').val(id);
+}
 $(document).ready(function() {
-    $('#confirmModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var id = button.data('id');
-        var modal = $(this);
-        $.ajax({
-            url: '/home/histori-pembayaran/' + id,
-            type: 'get',
-            dataType: 'json',
-            error: function(err) {
-                console.log(err.responseText);
-            },
-            success: function(res) {
-                modal.find('.modal-body img#bukti').attr('src', "{{ url('uploads/confirm') }}/" + res.confirm_file);
-            }
-        });
-        modal.find('.modal-body input[name="id"]').val(id);
+
+    $('a[data-toggle="modal"]').click(function (event) {
+        var id = $(this).data('id');
+        var target = $(this).data('target');
+        showModal(id, target);
     });
 
     $('form#confirmForm').submit(function(e) {
@@ -137,4 +175,10 @@ $(document).ready(function() {
     });
 });
 </script>
+@if($check)
+<script type="text/javascript">
+    showModal({{ $check }}, '#confirmModal');
+    $('#confirmModal').modal('show');
+</script>
+@endif
 @endsection

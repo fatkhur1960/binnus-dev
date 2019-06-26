@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\ModelAgama;
 use App\ModelPaket;
 use App\ModelSumber;
@@ -167,13 +168,24 @@ class HomeController extends Controller
         $order->confirm_file = $filename;
         $order->save();
 
-        $to_email = 'fatkhuranonym@gmail.com';
-        $data = array('name'=>"Sam Jose", "body" => "Test mail");
+        $peserta = ModelPeserta::where('id_user', Auth::user()->id)->first();
+        $paket = ModelPaket::find($order->id_paket)->first();
+
+        $to_email = env('TO_EMAIL', 'fatkhuranonym@gmail.com');
+        $data = array(
+            "nama" => $peserta->nama_lengkap, 
+            "kelas" => $paket->nama_paket,
+            "email" => Auth::user()->email,
+            "tgl" => $order->updated_at,
+            "jumlah" => "Rp. " . number_format($order->total_harga),
+            "bukti" => url('uploads/confirm/' . $filename),
+            "url" => url('home/histori-pembayaran?check=' . $order->id)
+        );
             
-        Mail::send('emails.mail', $data, function($message) use ($to_email) {
+        Mail::send('email.mail', $data, function($message) use ($to_email) {
             $message->to($to_email)
                     ->subject('Konfirmasi Pembayaran');
-            $message->from('fanonym1960@gmail.com','Binnus-wsb Web');
+            $message->from('fanonym1960@gmail.com','Binnus Wonosobo Web');
         });
 
         return redirect('/home/pembayaran?status=' . $order->status)->with('success','Terima kasih. Permintaan Anda akan segera kami proses.');

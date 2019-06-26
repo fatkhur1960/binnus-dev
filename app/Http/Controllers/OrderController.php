@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\ModelOrder;
 use App\ModelPeserta;
+use App\ModelPaket;
+use App\User;
 
 class OrderController extends Controller
 {
@@ -19,6 +22,7 @@ class OrderController extends Controller
      */
     public function index(Request $req)
     {
+        $check = $req->input('check');
         $status = $req->input('status') != "" ? $req->input('status') : false;
         $no_induk = $req->input('no_induk') != "" ? $req->input('no_induk') : false;
         if($no_induk && $status) {
@@ -36,7 +40,7 @@ class OrderController extends Controller
                 ->paginate(20);
         }
 
-        return view('admin.pembayaran', compact('history'));
+        return view('admin.pembayaran', compact('history', 'check'));
     }
 
     /**
@@ -69,7 +73,18 @@ class OrderController extends Controller
     public function show($id)
     {
         $history = ModelOrder::where('id', $id)->first();
-        return response()->json($history, 200);
+        $peserta = ModelPeserta::find($history->id_peserta)->first();
+        $user = User::find($peserta->id_user);
+        $paket = ModelPaket::find($history->id_paket)->first();
+
+        $data = array(
+            "nama" => $peserta->nama_lengkap, 
+            "kelas" => $paket->nama_paket,
+            "email" => $user->email,
+            "jumlah" => "Rp. " . number_format($history->total_harga),
+            "history" => $history
+        );
+        return response()->json($data, 200);
     }
 
     /**

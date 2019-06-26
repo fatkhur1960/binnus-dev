@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Boardicle Email</title>
+    <title>Email</title>
     <style>
         /* -------------------------------------
             GLOBAL RESETS
@@ -306,7 +306,7 @@
                                                                 <td>{{ $nama }}</td>
                                                             </tr>
                                                             <tr>
-                                                                <td>Kelas Kursus</td>
+                                                                <td>Paket Kursus</td>
                                                                 <td>:</td>
                                                                 <td>{{ $kelas }}</td>
                                                             </tr>
@@ -324,6 +324,16 @@
                                                                 <td>Jumlah Transfer</td>
                                                                 <td>:</td>
                                                                 <td>{{ $jumlah }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="3">
+                                                                    <img src="{{ $bukti }}"/>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="3">
+                                                                    <a target="_blank" href="{{ $url }}">Konfirmasi</a>
+                                                                </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -344,14 +354,8 @@
                 <div class="footer">
                     <table border="0" cellpadding="0" cellspacing="0">
                         <tr>
-                            <td class="content-block">
-                                <span class="apple-link">Anak IT Inc</span>
-                                {{--<br> Don't like these emails? <a href="http://i.imgur.com/CScmqnj.gif">Unsubscribe</a>.--}}
-                            </td>
-                        </tr>
-                        <tr>
                             <td class="content-block powered-by">
-                                Powered by <a href="http://medium.com/@kiddy.xyz">Anak IT</a>.
+                                Powered by Binnus Wonosobo.
                             </td>
                         </tr>
                     </table>
