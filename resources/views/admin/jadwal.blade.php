@@ -236,6 +236,22 @@ const editJadwal = function(url) {
         }
     });
 }
+const reset = function() {
+    var modal = $('div#jadwalModal');
+    var form = modal.find('form#formJadwal');
+    modal.find('#jadwalModalLabel').text('Tambah Jadwal');
+    form.attr('action', '{{ url("/home/jadwal-kursus") }}');
+    form.find('input[name="_method"]').remove();
+    form.find('[name="id_paket"]').val('');
+    form.find('[name="id_paket"]').attr('disabled',false);
+    form.find('[name="periode"]').val('');
+    form.find('[name="periode"]').attr('readonly',false);
+    form.find('[name="kuota"]').val('');
+    form.find('[name="hari_1"]').val('');
+    form.find('[name="hari_2"]').val('');
+    form.find('[name="mulai"]').val('');
+    form.find('[name="selesai"]').val('');
+}
 const hapusJadwal = function(e, url, data) {
     e.preventDefault();
     Swal.fire({
@@ -264,6 +280,10 @@ const hapusJadwal = function(e, url, data) {
     });
 }
 $(document).ready(function() {
+    $('div#jadwalModal').on('hide.bs.modal', function(event) {
+        console.log('closed');
+        reset();
+    });
     $('#peserta').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var link = button.attr('href')

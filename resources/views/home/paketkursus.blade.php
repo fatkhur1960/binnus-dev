@@ -34,7 +34,7 @@
                     <th>Paket</th>
                     <th>Jadwal</th>
                     <th>Waktu</th>
-                    <th>Status</th>
+                    <th>Status Pembayaran</th>
                     <th>Tanggal</th>
                     <th width="140">Aksi</th>
                 </tr>
