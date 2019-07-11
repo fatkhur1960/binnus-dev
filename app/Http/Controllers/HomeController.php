@@ -171,7 +171,7 @@ class HomeController extends Controller
         $peserta = ModelPeserta::where('id_user', Auth::user()->id)->first();
         $paket = ModelPaket::find($order->id_paket)->first();
 
-        $to_email = env('TO_EMAIL', 'fatkhuranonym@gmail.com');
+        $to_email = env('TO_EMAIL', 'ivanziza3@gmail.com');
         $data = array(
             "nama" => $peserta->nama_lengkap, 
             "kelas" => $paket->nama_paket,
@@ -198,9 +198,10 @@ class HomeController extends Controller
         $count = $this->order_count;
         $user = ModelPeserta::where('id_user', Auth::user()->id)->first();
         $ins_kelas = new ModelPaket();
-        $kelas = $ins_kelas->list($user->id_peserta)->get();
+        $kelas = $ins_kelas->list($user->id_peserta)->toSql();
+        echo $kelas;
         
-        return view('home.paketkursus', compact('paket', 'kelas','user','count'));
+        // return view('home.paketkursus', compact('paket', 'kelas','user','count'));
     }
 
     public function ambilPaket(Request $req)
