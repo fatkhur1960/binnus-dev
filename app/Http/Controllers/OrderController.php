@@ -73,8 +73,8 @@ class OrderController extends Controller
     public function show($id)
     {
         $history = ModelOrder::where('id', $id)->first();
-        $peserta = ModelPeserta::find($history->id_peserta)->first();
-        $user = User::find($peserta->id_user);
+        $peserta = ModelPeserta::where('id_peserta',$history->id_peserta)->first();
+        $user = User::where('id',$peserta->id_user)->first();
         $paket = ModelPaket::find($history->id_paket)->first();
 
         $data = array(

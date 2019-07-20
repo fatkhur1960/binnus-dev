@@ -21,10 +21,10 @@ class ModelOrder extends Model
     public function getFiltered($no_induk,$status = '') {
         $data = DB::table($this->table)
             ->select('tbl_order.*', 'tbl_peserta.no_induk', 'tbl_paket.nama_paket')
-            ->leftJoin('tbl_paket', function($join) {
+            ->innerJoin('tbl_paket', function($join) {
                 $join->on('tbl_paket.id_paket','=','tbl_order.id_paket');
             })
-            ->leftJoin('tbl_peserta', function($join) {
+            ->innerJoin('tbl_peserta', function($join) {
                 $join->on('tbl_peserta.id_peserta','=','tbl_order.id_peserta');
             })
             ->where('tbl_peserta.no_induk', $no_induk);

@@ -53,7 +53,11 @@
                     <td>{{ $num++ }}</td>
                     <td>{{ $row->paket->nama_paket }}</td>
                     <td>{{ $row->periode }}</td>
+                    @if($row->created_at)
+                    <td>{{ $row->hari }} {{ date('Y-m-d', strtotime($row->created_at)) }}</td>
+                    @else
                     <td>{{ $row->hari }}</td>
+                    @endif
                     <td>{{ $row->kuota }}</td>
                     <td>{{ $row->waktu }}</td>
                     <td>
@@ -130,6 +134,12 @@
                                     <option value="{{ $item }}">{{ $item }}</option>
                                 @endforeach
                             </select>
+                        </div>
+                    </div>
+                    <div class="form-group row" >
+                        <label class="col-4 col-form-label" for="waktu">Tanggal</label>
+                        <div class="col-8">
+                            <input name="tanggal" class="form-control{{ $errors->has('tanggal') ? ' is-invalid' : '' }}"/>
                         </div>
                     </div>
                     <div class="form-group row" >
@@ -210,6 +220,10 @@
             minViewMode: 1,
             format: 'mm/yyyy'
         }); 
+        $('input[name="tanggal"]').datepicker({
+            autoclose: true,
+            format: 'yyyy-mm-dd'
+        }); 
     });
 })(jQuery);
 
@@ -232,6 +246,7 @@ const editJadwal = function(url) {
             form.find('[name="hari_2"]').val(day[1]);
             form.find('[name="mulai"]').val(time[0]);
             form.find('[name="selesai"]').val(time[1]);
+            form.find('[name="tanggal"]').val(result.created_at);
             modal.modal('show');
         }
     });
@@ -251,6 +266,7 @@ const reset = function() {
     form.find('[name="hari_2"]').val('');
     form.find('[name="mulai"]').val('');
     form.find('[name="selesai"]').val('');
+    form.find('[name="tanggal"]').val('');
 }
 const hapusJadwal = function(e, url, data) {
     e.preventDefault();

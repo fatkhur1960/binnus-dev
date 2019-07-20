@@ -181,7 +181,7 @@ class HomeController extends Controller
             "bukti" => url('uploads/confirm/' . $filename),
             "url" => url('home/histori-pembayaran?check=' . $order->id)
         );
-            
+    
         Mail::send('email.mail', $data, function($message) use ($to_email) {
             $message->to($to_email)
                     ->subject('Konfirmasi Pembayaran');
@@ -198,10 +198,9 @@ class HomeController extends Controller
         $count = $this->order_count;
         $user = ModelPeserta::where('id_user', Auth::user()->id)->first();
         $ins_kelas = new ModelPaket();
-        $kelas = $ins_kelas->list($user->id_peserta)->toSql();
-        echo $kelas;
+        $kelas = $ins_kelas->list($user->id_peserta)->get();
         
-        // return view('home.paketkursus', compact('paket', 'kelas','user','count'));
+        return view('home.paketkursus', compact('paket', 'kelas','user','count'));
     }
 
     public function ambilPaket(Request $req)
@@ -231,7 +230,7 @@ class HomeController extends Controller
                 'id_peserta'    => $req->input('id_peserta'),
                 'total_harga'   => $req->input('harga')
             ];
-            
+
             ModelKelas::create($data_kelas);
             ModelOrder::create($data_order);
             return redirect('/home/pilih-paket-kursus')->with('success','Terima kasih. Silahkan selesaikan pembayaran Anda untuk mengambil jadwal');
@@ -255,11 +254,11 @@ class HomeController extends Controller
 
     public function getJadwal(Request $req)
     {
-        $periode = date('m/Y',  strtotime("+1 month"));
+        $periode = date('m/Y');
         $jadwal = new ModelJadwal();
         return response()->json([
             'periode' => $periode,
-            'jadwal' => $jadwal->getJadwal($req->input('id_paket'),$req->input('id_jadwal'),$periode)
+            'jadwal' => $jadwal->getJadwal($req->input('id_paket'),$req->input('id_jadwal'))
         ], 200);
     }
 

@@ -10,14 +10,14 @@ class ModelJadwal extends Model
     public $timestamps = false;
     protected $primaryKey = 'id_jadwal';
     protected $table = 'tbl_jadwal';
-    protected $fillable = ['id_paket', 'periode', 'hari', 'kuota', 'waktu'];
+    protected $fillable = ['id_paket', 'periode', 'hari', 'kuota', 'waktu','created_at'];
 
     public function paket()
     {
         return $this->belongsTo(ModelPaket::class, 'id_paket', 'id_paket');
     }
 
-    public function getJadwal($id_paket, $id_jadwal, $periode)
+    public function getJadwal($id_paket, $id_jadwal)
     {
         $data = DB::table('tbl_kelas')
             ->select('tbl_jadwal.*', DB::raw('(tbl_jadwal.kuota-peserta.jumlah) as sisa'))
@@ -31,8 +31,8 @@ class ModelJadwal extends Model
                 $join->on('tbl_jadwal.id_jadwal','=','peserta.id_jadwal');
             })
             ->where([
-                'tbl_jadwal.id_paket' => $id_paket,
-                'tbl_jadwal.periode' => $periode
+                'tbl_jadwal.id_paket' => $id_paket
+                // 'tbl_jadwal.periode' => $periode
             ]);
         if($id_jadwal) {
             $data = $data->whereNotIn('tbl_jadwal.id_jadwal', [$id_jadwal])

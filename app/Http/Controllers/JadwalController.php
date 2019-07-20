@@ -36,7 +36,7 @@ class JadwalController extends Controller
             'id_paket'  => 'required|numeric',
             'periode'   => 'required',
             'hari_1'    => 'required',
-            'hari_2'    => 'required',
+            // 'hari_2'    => 'required',
             'kuota'     => 'required|numeric',
             'mulai'     => 'required',
             'selesai'   => 'required'
@@ -44,13 +44,20 @@ class JadwalController extends Controller
             'required' => 'Field :attribute tidak boleh kosong!',
         ]);
 
+        if($request->input('hari_2') != "") {
+            $delimiter = "-";
+        } else {
+            $delimiter = "";
+        }
+
         if(!$val->fails()) {
             $data = [
                 'id_paket'  => $request->input('id_paket'),
                 'periode'   => $request->input('periode'),
-                'hari'      => $request->input('hari_1') . '-' . $request->input('hari_2'),
+                'hari'      => $request->input('hari_1') . $delimiter . $request->input('hari_2'),
                 'kuota'     => $request->input('kuota'),
                 'waktu'     => $request->input('mulai') . '-' . $request->input('selesai'),
+                'created_at' => $request->input('tanggal')
             ];
             ModelJadwal::create($data);
 
@@ -84,7 +91,7 @@ class JadwalController extends Controller
         $jadwal = ModelJadwal::find($id);
         $val = Validator::make($request->all(), [
             'hari_1'    => 'required',
-            'hari_2'    => 'required',
+            // 'hari_2'    => 'required',
             'kuota'     => 'required|numeric',
             'mulai'     => 'required',
             'selesai'   => 'required'
@@ -92,10 +99,17 @@ class JadwalController extends Controller
             'required' => 'Field :attribute tidak boleh kosong!',
         ]);
 
+        if($request->input('hari_2') != "") {
+            $delimiter = "-";
+        } else {
+            $delimiter = "";
+        }
+
         if(!$val->fails()) {
-            $jadwal->hari    = $request->input('hari_1') . '-' . $request->input('hari_2');
+            $jadwal->hari    = $request->input('hari_1') . $delimiter . $request->input('hari_2');
             $jadwal->kuota   = $request->input('kuota');
             $jadwal->waktu   = $request->input('mulai') . '-' . $request->input('selesai');
+            $jadwal->created_at = $request->input('tanggal');
             $jadwal->save();
 
             return redirect('/home/jadwal-kursus')->with('success','Jadwal telah diperbarui');
