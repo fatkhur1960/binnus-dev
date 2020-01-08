@@ -3,7 +3,7 @@ Binnus Wonosobo Web Development
 
 Pre Installation
 ---------------------------------
-1. Download git (di sini)[https://git-scm.com/download/win] dan install
+1. Download git [di sini](https://git-scm.com/download/win) dan install
 2. ``git clone https://github.com/fatkhur1960/binnus-dev.git``
 2. Download composer
 ```bash
