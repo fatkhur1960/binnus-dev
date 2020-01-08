@@ -185,7 +185,7 @@ class HomeController extends Controller
         Mail::send('email.mail', $data, function($message) use ($to_email) {
             $message->to($to_email)
                     ->subject('Konfirmasi Pembayaran');
-            $message->from('fanonym1960@gmail.com','Binnus Wonosobo Web');
+            $message->from('binnusdev@gmail.com','Binnus Wonosobo Web');
         });
 
         return redirect('/home/pembayaran?status=' . $order->status)->with('success','Terima kasih. Permintaan Anda akan segera kami proses.');
