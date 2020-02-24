@@ -14,7 +14,7 @@ class ModelPaket extends Model
 
     function list($id_peserta) {
         $data = DB::table('tbl_kelas')
-            ->select('tbl_paket.nama_paket', 'tbl_jadwal.hari', 'tbl_jadwal.waktu', 'tbl_order.status', 'tbl_jadwal.created_at', 'tbl_jadwal.id_jadwal', 'tbl_kelas.id_kelas', 'tbl_paket.id_paket')
+            ->select('tbl_paket.nama_paket', 'tbl_jadwal.hari', 'tbl_jadwal.waktu', 'tbl_order.status', DB::raw('DATE(tbl_jadwal.created_at) as created_at'), 'tbl_jadwal.id_jadwal', 'tbl_kelas.id_kelas', 'tbl_paket.id_paket')
             ->leftJoin('tbl_paket', function($join) {
                 $join->on('tbl_paket.id_paket', '=', 'tbl_kelas.id_paket');
             })
