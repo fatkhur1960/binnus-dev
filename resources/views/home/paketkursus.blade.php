@@ -30,7 +30,7 @@
             <thead>
                 <tr>
                     <th width="30">No.</th>
-                    <th>No. Induk</th>
+                    {{-- <th>No. Induk</th> --}}
                     <th>Paket</th>
                     <th>Jadwal</th>
                     <th>Waktu</th>
@@ -43,7 +43,7 @@
             @foreach ($kelas as $item)
             <tr>
                 <td>{{ $no++ }}</td>
-                <td>{{ $item->no_induk }}</td>
+                {{-- <td>{{ $item->no_induk }}</td> --}}
                 <td>{{ $item->nama_paket }}</td>
                 <td>{{ $item->hari ?? "-" }}</td>
                 <td>{{ $item->waktu ?? "-" }}</td>

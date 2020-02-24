@@ -13,16 +13,30 @@ class ModelPaket extends Model
     protected $fillable = ['nama_paket', 'pertemuan', 'harga'];
 
     function list($id_peserta) {
+        $test = DB::table('tbl_kelas')
+            ->leftJoin('tbl_paket', function($join) {
+                $join->on('tbl_paket.id_paket', '=', 'tbl_kelas.id_paket');
+            })
+            ->leftJoin('tbl_jadwal', function($join) {
+                $join->on('tbl_jadwal.id_jadwal', '=', 'tbl_kelas.id_jadwal');
+            })
+            ->leftJoin('tbl_order', function($join) {
+                $join->on('tbl_order.id_paket', '=', 'tbl_kelas.id_paket');
+            })
+            ->where([
+                'tbl_kelas.id_peserta' => $id_peserta,
+                'tbl_order.id_peserta' => $id_peserta,
+            ]);
         $peserta = DB::table('tbl_kelas')
             ->select(
                 DB::raw('
-                    Min(tbl_kelas.id_kelas) as id_kelas, 
-                    Min(tbl_kelas.id_paket) as id_paket,
-                    Min(tbl_peserta.id_peserta) as id_peserta, 
-                    Min(tbl_peserta.no_induk) as no_induk, 
-                    Min(tbl_jadwal.id_jadwal) as id_jadwal,
-                    Min(tbl_jadwal.hari) as hari, 
-                    Min(tbl_jadwal.waktu) as waktu
+                    Max(tbl_kelas.id_kelas) as id_kelas, 
+                    Max(tbl_kelas.id_paket) as id_paket,
+                    Max(tbl_peserta.id_peserta) as id_peserta, 
+                    Max(tbl_peserta.no_induk) as no_induk, 
+                    Max(tbl_jadwal.id_jadwal) as id_jadwal,
+                    Max(tbl_jadwal.hari) as hari, 
+                    Max(tbl_jadwal.waktu) as waktu
                 ')
             )
             ->leftJoin('tbl_peserta', function($join) {
@@ -45,6 +59,6 @@ class ModelPaket extends Model
             ->joinSub($data, 'data', function($join) {
                 $join->on('tbl_paket.id_paket','=','data.id_paket');
             });
-        return $paket;
+        return $test;
     }
 }
