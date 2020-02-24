@@ -182,7 +182,7 @@
                 <label for="file_foto" class="control-label col-md-3">Foto</label> 
                 <div class="col-md-5">
                     <input value="{{ $peserta->file_foto }}" id="file_foto" accept="image/*" name="file_foto" class="form-control" required="required" type="file">
-                    <div>*) Foto ukuran 114x150 pixel</div>
+                    
                     <div>*) Maksimal 500kb</div>
                 </div>
                 <div class="col-md-4">
@@ -237,11 +237,9 @@ function readURL(input, selector) {
                 image.onload = function () {
                     var height = this.height;
                     var width = this.width;
-                    if (height > 150 || width > 114) {
-                        alert("Panjang dan lebar foto terlalu besar! Maks: 150x114");
-                    } else {
-                        $(selector).attr('src', e.target.result);
-                    }
+                    
+                    $(selector).attr('src', e.target.result);
+                    
                 };
             } else {
                 $(selector).attr('src', e.target.result);
