@@ -34,7 +34,7 @@
                     <th>Paket</th>
                     <th>Jadwal</th>
                     <th>Waktu</th>
-                    <th>Status Pembayaran</th>
+                    <th>Status Pemb.</th>
                     <th>Tanggal</th>
                     <th width="140">Aksi</th>
                 </tr>
@@ -138,12 +138,13 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <strong>Periode : </strong><span id="periode"></span>
+                    <strong>Paket : </strong><span id="periode"></span>
                 </div>
                 @csrf
                 <table class="table table-condensed table-sm table-striped">
                     <thead>
                         <tr>
+                            <th>Periode</th>
                             <th>Hari</th>
                             <th>Waktu</th>
                             <th>Kuota</th>
@@ -199,14 +200,14 @@ $(document).ready(function(){
                 if(result) {
                     var link = '';
                     modal.find('.modal-body tbody').empty();
-                    modal.find('span#periode').text(result.periode);
+                    modal.find('span#periode').text(result.nama_paket);
                     $.each(result.jadwal, function(i, item) {
                         if(item.sisa > 0) {
                             link = '<a href="#" onclick="updateJadwal(\''+id_kelas+'\',\''+item.id_jadwal+'\');return false;">Pilih</a>';
                         } else {
                             link = 'Penuh';
                         }
-                        modal.find('.modal-body tbody').append('<tr><td>'+item.hari+'</td><td>'+item.waktu+'</td><td>'+item.kuota+'</td><td>'+item.sisa+'</td><td>'+link+'</td></tr>');
+                        modal.find('.modal-body tbody').append('<tr><td>'+item.periode+'</td><td>'+item.hari+'</td><td>'+item.waktu+'</td><td>'+item.kuota+'</td><td>'+item.sisa+'</td><td>'+link+'</td></tr>');
                     });
                 } else {
                     alert('Belum ada jadwal');

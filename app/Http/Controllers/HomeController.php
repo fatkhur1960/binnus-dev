@@ -254,10 +254,10 @@ class HomeController extends Controller
 
     public function getJadwal(Request $req)
     {
-        $periode = date('m/Y');
         $jadwal = new ModelJadwal();
+        $paket = ModelPaket::where('id_paket', $req->input('id_paket'))->first();
         return response()->json([
-            'periode' => $periode,
+            'nama_paket' => $paket->nama_paket,
             'jadwal' => $jadwal->getJadwal($req->input('id_paket'),$req->input('id_jadwal'))
         ], 200);
     }
